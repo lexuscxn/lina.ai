@@ -4,14 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lexus AI - Yapay Zeka Asistanı</title>
-    <!-- Google Gemini SDK -->
-    <script type="importmap">
-      {
-        "imports": {
-          "@google/genai": "https://esm.run/@google/genai"
-        }
-      }
-    </script>
     <style>
         * {
             box-sizing: border-box;
@@ -29,13 +21,15 @@
             position: relative;
         }
 
-        /* Hareketli Arkaplan Tuvali */
-        #bg-canvas {
+        /* Sabit Şık Arkaplan Işıltıları */
+        .bg-glow {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.12) 0%, transparent 40%),
+                        radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 40%);
             z-index: 1;
             pointer-events: none;
         }
@@ -313,7 +307,7 @@
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
+    <div class="bg-glow"></div>
 
     <div class="sidebar">
         <button class="new-chat-btn" onclick="yeniSohbet()">+ Yeni Sohbet</button>
@@ -347,11 +341,10 @@
         </div>
     </div>
 
-    <script type="module">
-        import { GoogleGenAI } from "@google/genai";
-
+    <!-- Güvenli Doğrudan REST API Bağlantısı (Modül Hatası Yok) -->
+    <script>
         const API_KEY = "AQ.Ab8RN6L-oRIEgaGrsnj89xeYVjcZHMucPb03MFW2gLJeLFbiAQ";
-        const ai = new GoogleGenAI({ apiKey: API_KEY });
+        const MODEL_NAME = "gemini-2.5-flash"; // veya gemini-1.5-flash
 
         let sohbetGecmisi = [];
 
@@ -375,17 +368,33 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: userText,
+                // Doğrudan REST API ile istek atılır, modül/CORS hatası yaşanmaz
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userText }] }]
+                    })
                 });
 
+                const data = await response.json();
                 document.getElementById(loadingId)?.remove();
-                chatBox.innerHTML += `<div class="message gemini-message">${response.text}</div>`;
+
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    const aiReply = data.candidates[0].content.parts[0].text;
+                    chatBox.innerHTML += `<div class="message gemini-message">${aiReply}</div>`;
+                } else if (data.error) {
+                    chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Hata: ${data.error.message}</div>`;
+                } else {
+                    chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Yanıt alınamadı.</div>`;
+                }
+
                 chatBox.scrollTop = chatBox.scrollHeight;
             } catch (error) {
                 document.getElementById(loadingId)?.remove();
-                chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Hata: ${error.message}</div>`;
+                chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Bağlantı Hatası: ${error.message}</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
         };
@@ -439,66 +448,5 @@
             }
         });
     </script>
-
-    <!-- Arkaplan Parçacık Animasyonu -->
-    <script>
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        const particles = Array.from({ length: 40 }, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            r: Math.random() * 2.5 + 1,
-            vx: (Math.random() - 0.5) * 0.5,
-            vy: (Math.random() - 0.5) * 0.5,
-            color: ['#a855f7', '#6366f1', '#38bdf8'][Math.floor(Math.random() * 3)]
-        }));
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            particles.forEach((p, i) => {
-                p.x += p.vx;
-                p.y += p.vy;
-
-                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = p.color;
-                ctx.fill();
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    const p2 = particles[j];
-                    const dx = p.x - p2.x;
-                    const dy = p.y - p2.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-
-                    if (dist < 120) {
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.strokeStyle = `rgba(168, 85, 247, ${1 - dist / 120 * 0.7})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.stroke();
-                    }
-                }
-            });
-
-            requestAnimationFrame(animate);
-        }
-        animate();
-    </script>
-
 </body>
 </html>
