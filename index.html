@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lexus AI - Yapay Zeka Asistanı</title>
+    <title>Lina AI - Yapay Zeka Asistanı</title>
     <style>
         * {
             box-sizing: border-box;
@@ -21,7 +21,6 @@
             position: relative;
         }
 
-        /* Sabit Şık Arkaplan Işıltıları */
         .bg-glow {
             position: absolute;
             top: 0;
@@ -318,12 +317,12 @@
     <div class="main-content">
         <div class="chat-container">
             <div class="chat-header">
-                <h2>Lexus AI ⚡</h2>
+                <h2>Lina AI ⚡</h2>
                 <p>Gelişmiş Yapay Zeka Asistanı</p>
             </div>
             
             <div id="chat-box">
-                <div class="message gemini-message">Merhaba! Ben Lexus AI. Size bugün nasıl yardımcı olabilirim?</div>
+                <div class="message gemini-message">Merhaba! Ben Lina AI. Size bugün nasıl yardımcı olabilirim?</div>
             </div>
 
             <div class="input-area">
@@ -335,16 +334,16 @@
                 </div>
 
                 <input type="file" id="file-input" style="display:none;" onchange="dosyaSecildi(event)">
-                <input type="text" id="user-input" placeholder="Lexus AI'a bir şeyler sorun..." onkeydown="if(event.key === 'Enter') mesajGonder()">
+                <input type="text" id="user-input" placeholder="Lina AI'a bir şeyler sorun..." onkeydown="if(event.key === 'Enter') mesajGonder()">
                 <button class="send-btn" onclick="mesajGonder()">Gönder</button>
             </div>
         </div>
     </div>
 
-    <!-- Güvenli Doğrudan REST API Bağlantısı (Modül Hatası Yok) -->
     <script>
-        const API_KEY = "AQ.Ab8RN6L-oRIEgaGrsnj89xeYVjcZHMucPb03MFW2gLJeLFbiAQ";
-        const MODEL_NAME = "gemini-2.5-flash"; // veya gemini-1.5-flash
+        // AI Studio'dan aldığınız AIzaSy... ile başlayan anahtarınızı buraya yazın:
+        const API_KEY = "AIzaSy_BURAYA_AI_STUDIO_API_KEY_YAZIN";
+        const MODEL_NAME = "gemini-2.5-flash";
 
         let sohbetGecmisi = [];
 
@@ -364,11 +363,10 @@
             chatBox.scrollTop = chatBox.scrollHeight;
 
             const loadingId = "loading-" + Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}" class="message loading-message">Lexus AI düşünüyor...</div>`;
+            chatBox.innerHTML += `<div id="${loadingId}" class="message loading-message">Lina AI düşünüyor...</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // Doğrudan REST API ile istek atılır, modül/CORS hatası yaşanmaz
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
