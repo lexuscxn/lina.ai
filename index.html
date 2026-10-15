@@ -21,48 +21,68 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0f0c20 0%, #150d2a 50%, #080512 100%);
+            background: #090514;
             color: #f1f5f9;
             display: flex;
             height: 100vh;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Yan Menü (Geçmiş Sohbetler) */
+        /* Hareketli Arkaplan Tuvali */
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Sol Yan Menü (Geçmiş Sohbetler) */
         .sidebar {
-            width: 260px;
-            background: rgba(12, 9, 24, 0.95);
+            width: 280px;
+            background: rgba(12, 8, 28, 0.7);
+            backdrop-filter: blur(20px);
             border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
             padding: 20px;
             gap: 15px;
+            z-index: 10;
         }
 
         .new-chat-btn {
             background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
             color: white;
             border: none;
-            border-radius: 12px;
-            padding: 12px;
-            font-weight: 600;
+            border-radius: 14px;
+            padding: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .new-chat-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(168, 85, 247, 0.5);
         }
 
         .history-title {
             font-size: 0.8rem;
             color: #94a3b8;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
             margin-top: 10px;
+            font-weight: 600;
         }
 
         .history-list {
@@ -75,8 +95,8 @@
 
         .history-item {
             background: rgba(255, 255, 255, 0.03);
-            padding: 10px 14px;
-            border-radius: 10px;
+            padding: 12px 14px;
+            border-radius: 12px;
             font-size: 0.9rem;
             color: #cbd5e1;
             cursor: pointer;
@@ -84,12 +104,14 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
         }
 
         .history-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: white;
+            background: rgba(168, 85, 247, 0.15);
+            border-color: rgba(168, 85, 247, 0.3);
+            color: #ffffff;
+            transform: translateX(4px);
         }
 
         /* Ana Sohbet Alanı */
@@ -98,75 +120,78 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 24px;
+            z-index: 10;
+            position: relative;
         }
 
         .chat-container {
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
             height: 90vh;
-            background: rgba(23, 15, 45, 0.75);
-            backdrop-filter: blur(16px);
-            border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(139, 92, 246, 0.15);
+            background: rgba(19, 13, 40, 0.65);
+            backdrop-filter: blur(24px);
+            border-radius: 28px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(168, 85, 247, 0.18);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .chat-header {
-            background: rgba(15, 12, 32, 0.85);
-            padding: 20px 28px;
+            background: rgba(12, 8, 28, 0.8);
+            padding: 22px 28px;
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .chat-header h2 {
-            font-size: 1.4rem;
-            background: linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4);
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #c084fc, #38bdf8, #818cf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
         .chat-header p {
-            font-size: 0.82rem;
+            font-size: 0.85rem;
             color: #94a3b8;
             margin-top: 4px;
         }
 
         #chat-box {
             flex: 1;
-            padding: 24px;
+            padding: 28px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
         }
 
         #chat-box::-webkit-scrollbar {
             width: 6px;
         }
         #chat-box::-webkit-scrollbar-thumb {
-            background: rgba(139, 92, 246, 0.3);
+            background: rgba(168, 85, 247, 0.35);
             border-radius: 10px;
         }
 
         .message {
             max-width: 80%;
-            padding: 14px 18px;
-            border-radius: 18px;
+            padding: 15px 20px;
+            border-radius: 20px;
             font-size: 0.98rem;
-            line-height: 1.5;
+            line-height: 1.6;
             word-wrap: break-word;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            animation: fadeIn 0.3s ease-in-out;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .user-message {
@@ -177,167 +202,101 @@
         }
 
         .gemini-message {
-            background: rgba(30, 27, 60, 0.85);
+            background: rgba(30, 22, 60, 0.85);
             color: #f1f5f9;
             align-self: flex-start;
             border-bottom-left-radius: 4px;
-            border: 1px solid rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(168, 85, 247, 0.25);
         }
 
         .loading-message {
-            background: rgba(30, 27, 60, 0.6);
+            background: rgba(30, 22, 60, 0.6);
             color: #c084fc;
             align-self: flex-start;
             font-style: italic;
             border: 1px dashed rgba(168, 85, 247, 0.4);
         }
 
+        /* Input ve Artı (+) Butonu Alanı */
         .input-area {
-            padding: 18px 24px;
-            background: rgba(15, 12, 32, 0.9);
+            padding: 20px 24px;
+            background: rgba(12, 8, 28, 0.85);
             display: flex;
+            align-items: center;
             gap: 12px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
         }
 
-        input {
-            flex: 1;
-            padding: 14px 20px;
-            background: rgba(255, 255, 255, 0.05);
+        .attach-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 14px;
-            color: #ffffff;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        input::placeholder {
-            color: #64748b;
-        }
-
-        input:focus {
-            border-color: #a855f7;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
-        }
-
-        button.send-btn {
-            padding: 0 24px;
-            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
-            color: #ffffff;
-            border: none;
-            border-radius: 14px;
-            font-weight: 700;
-            font-size: 0.98rem;
+            color: #c084fc;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+            user-select: none;
         }
 
-        button.send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+        .attach-btn:hover {
+            background: rgba(168, 85, 247, 0.25);
+            border-color: rgba(168, 85, 247, 0.5);
+            color: #ffffff;
+            transform: rotate(90deg);
         }
 
-        /* Responsive / Mobil Uyum */
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Sol Yan Menü: Geçmiş Sohbetler -->
-    <div class="sidebar">
-        <button class="new-chat-btn" onclick="yeniSohbet()">+ Yeni Sohbet</button>
-        <div class="history-title">Geçmiş Sohbetler</div>
-        <div class="history-list" id="history-list">
-            <!-- Geçmiş buraya otomatik eklenecek -->
-        </div>
-    </div>
-
-    <!-- Sağ Ana Sohbet Bölümü -->
-    <div class="main-content">
-        <div class="chat-container">
-            <div class="chat-header">
-                <h2>Lexus AI ⚡</h2>
-                <p>Gelişmiş Yapay Zeka Asistanı</p>
-            </div>
-            
-            <div id="chat-box">
-                <div class="message gemini-message">Merhaba! Ben Lexus AI. Size bugün nasıl yardımcı olabilirim?</div>
-            </div>
-
-            <div class="input-area">
-                <input type="text" id="user-input" placeholder="Lexus AI'a bir şeyler sorun..." onkeydown="if(event.key === 'Enter') mesajGonder()">
-                <button class="send-btn" onclick="mesajGonder()">Gönder</button>
-            </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { GoogleGenAI } from "@google/genai";
-
-        const API_KEY = "AQ.Ab8RN6K6ANzOeoekDkglO_HjYi_1cC7yr1BfcuKhsCJIkwDqnQ";
-        const ai = new GoogleGenAI({ apiKey: API_KEY });
-
-        let sohbetGecmisi = [];
-
-        window.mesajGonder = async function() {
-            const inputField = document.getElementById("user-input");
-            const chatBox = document.getElementById("chat-box");
-            const userText = inputField.value.trim();
-
-            if (!userText) return;
-
-            // İlk mesajsa geçmiş listesine ekle
-            if (sohbetGecmisi.length === 0) {
-                gecmiseEkle(userText);
-            }
-
-            chatBox.innerHTML += `<div class="message user-message">${userText}</div>`;
-            inputField.value = "";
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            const loadingId = "loading-" + Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}" class="message loading-message">Lexus AI düşünüyor...</div>`;
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            try {
-                const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: userText,
-                });
-
-                document.getElementById(loadingId)?.remove();
-                chatBox.innerHTML += `<div class="message gemini-message">${response.text}</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (error) {
-                document.getElementById(loadingId)?.remove();
-                chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171; border-color: #ef4444;">Hata: ${error.message}</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        };
-
-        function gecmiseEkle(baslik) {
-            sohbetGecmisi.push(baslik);
-            const historyList = document.getElementById("history-list");
-            historyList.innerHTML = "";
-            sohbetGecmisi.forEach((item) => {
-                historyList.innerHTML += `<div class="history-item">${item}</div>`;
-            });
+        /* (+) Menü Popup */
+        .attach-menu {
+            position: absolute;
+            bottom: 80px;
+            left: 24px;
+            background: rgba(20, 14, 45, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 18px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 100;
+            min-width: 180px;
         }
 
-        window.yeniSohbet = function() {
-            const chatBox = document.getElementById("chat-box");
-            chatBox.innerHTML = `<div class="message gemini-message">Yeni sohbet başlatıldı! Size nasıl yardımcı olabilirim?</div>`;
-            sohbetGecmisi = [];
-            document.getElementById("history-list").innerHTML = "";
-        };
-    </script>
+        .attach-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
 
-</body>
-</html>
+        .menu-item {
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+        }
+
+        .menu-item:hover {
+            background: rgba(168, 85, 247, 0.2);
+            color: #ffffff;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.
