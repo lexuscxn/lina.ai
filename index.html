@@ -40,10 +40,10 @@
             pointer-events: none;
         }
 
-        /* Sol Yan Menü (Geçmiş Sohbetler) */
+        /* Sol Yan Menü */
         .sidebar {
             width: 280px;
-            background: rgba(12, 8, 28, 0.7);
+            background: rgba(12, 8, 28, 0.85);
             backdrop-filter: blur(20px);
             border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
@@ -65,10 +65,6 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(168, 85, 247, 0.3);
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
 
         .new-chat-btn:hover {
@@ -111,7 +107,6 @@
             background: rgba(168, 85, 247, 0.15);
             border-color: rgba(168, 85, 247, 0.3);
             color: #ffffff;
-            transform: translateX(4px);
         }
 
         /* Ana Sohbet Alanı */
@@ -129,7 +124,7 @@
             width: 100%;
             max-width: 850px;
             height: 90vh;
-            background: rgba(19, 13, 40, 0.65);
+            background: rgba(19, 13, 40, 0.75);
             backdrop-filter: blur(24px);
             border-radius: 28px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(168, 85, 247, 0.18);
@@ -152,7 +147,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
-            letter-spacing: -0.5px;
         }
 
         .chat-header p {
@@ -186,12 +180,6 @@
             line-height: 1.6;
             word-wrap: break-word;
             box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .user-message {
@@ -214,13 +202,12 @@
             color: #c084fc;
             align-self: flex-start;
             font-style: italic;
-            border: 1px dashed rgba(168, 85, 247, 0.4);
         }
 
-        /* Input ve Artı (+) Butonu Alanı */
+        /* Input ve Artı (+) Alanı */
         .input-area {
             padding: 20px 24px;
-            background: rgba(12, 8, 28, 0.85);
+            background: rgba(12, 8, 28, 0.9);
             display: flex;
             align-items: center;
             gap: 12px;
@@ -241,7 +228,6 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            user-select: none;
         }
 
         .attach-btn:hover {
@@ -251,7 +237,6 @@
             transform: rotate(90deg);
         }
 
-        /* (+) Menü Popup */
         .attach-menu {
             position: absolute;
             bottom: 80px;
@@ -261,22 +246,16 @@
             border: 1px solid rgba(168, 85, 247, 0.3);
             border-radius: 18px;
             padding: 10px;
-            display: flex;
+            display: none;
             flex-direction: column;
             gap: 6px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
             z-index: 100;
             min-width: 180px;
         }
 
         .attach-menu.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
+            display: flex;
         }
 
         .menu-item {
@@ -288,7 +267,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            transition: background 0.2s;
         }
 
         .menu-item:hover {
@@ -299,4 +277,228 @@
         input[type="text"] {
             flex: 1;
             padding: 14px 20px;
-            background: rgba(255, 255, 255, 0.
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: #a855f7;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        button.send-btn {
+            padding: 0 26px;
+            height: 48px;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.35);
+        }
+
+        button.send-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="sidebar">
+        <button class="new-chat-btn" onclick="yeniSohbet()">+ Yeni Sohbet</button>
+        <div class="history-title">Geçmiş Sohbetler</div>
+        <div class="history-list" id="history-list"></div>
+    </div>
+
+    <div class="main-content">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>Lexus AI ⚡</h2>
+                <p>Gelişmiş Yapay Zeka Asistanı</p>
+            </div>
+            
+            <div id="chat-box">
+                <div class="message gemini-message">Merhaba! Ben Lexus AI. Size bugün nasıl yardımcı olabilirim?</div>
+            </div>
+
+            <div class="input-area">
+                <div class="attach-btn" onclick="toggleMenu()">+</div>
+
+                <div class="attach-menu" id="attachMenu">
+                    <div class="menu-item" onclick="dosyaSecTetikle()">📁 Dosya Ekle</div>
+                    <div class="menu-item" onclick="kodSablonuEkle()">💻 Kod Şablonu</div>
+                </div>
+
+                <input type="file" id="file-input" style="display:none;" onchange="dosyaSecildi(event)">
+                <input type="text" id="user-input" placeholder="Lexus AI'a bir şeyler sorun..." onkeydown="if(event.key === 'Enter') mesajGonder()">
+                <button class="send-btn" onclick="mesajGonder()">Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { GoogleGenAI } from "@google/genai";
+
+        const API_KEY = "AQ.Ab8RN6L-oRIEgaGrsnj89xeYVjcZHMucPb03MFW2gLJeLFbiAQ";
+        const ai = new GoogleGenAI({ apiKey: API_KEY });
+
+        let sohbetGecmisi = [];
+
+        window.mesajGonder = async function() {
+            const inputField = document.getElementById("user-input");
+            const chatBox = document.getElementById("chat-box");
+            const userText = inputField.value.trim();
+
+            if (!userText) return;
+
+            if (sohbetGecmisi.length === 0) {
+                gecmiseEkle(userText);
+            }
+
+            chatBox.innerHTML += `<div class="message user-message">${userText}</div>`;
+            inputField.value = "";
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            const loadingId = "loading-" + Date.now();
+            chatBox.innerHTML += `<div id="${loadingId}" class="message loading-message">Lexus AI düşünüyor...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const response = await ai.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: userText,
+                });
+
+                document.getElementById(loadingId)?.remove();
+                chatBox.innerHTML += `<div class="message gemini-message">${response.text}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (error) {
+                document.getElementById(loadingId)?.remove();
+                chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Hata: ${error.message}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        };
+
+        function gecmiseEkle(baslik) {
+            sohbetGecmisi.push(baslik);
+            const historyList = document.getElementById("history-list");
+            historyList.innerHTML = "";
+            sohbetGecmisi.forEach((item) => {
+                historyList.innerHTML += `<div class="history-item">${item}</div>`;
+            });
+        }
+
+        window.yeniSohbet = function() {
+            const chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML = `<div class="message gemini-message">Yeni sohbet başlatıldı! Size nasıl yardımcı olabilirim?</div>`;
+            sohbetGecmisi = [];
+            document.getElementById("history-list").innerHTML = "";
+        };
+
+        window.toggleMenu = function() {
+            const menu = document.getElementById("attachMenu");
+            menu.classList.toggle("active");
+        };
+
+        window.dosyaSecTetikle = function() {
+            document.getElementById("attachMenu").classList.remove("active");
+            document.getElementById("file-input").click();
+        };
+
+        window.dosyaSecildi = function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const inputField = document.getElementById("user-input");
+                inputField.value = `[Dosya: ${file.name}] ` + inputField.value;
+            }
+        };
+
+        window.kodSablonuEkle = function() {
+            document.getElementById("attachMenu").classList.remove("active");
+            const inputField = document.getElementById("user-input");
+            inputField.value = "```javascript\n\n```";
+            inputField.focus();
+        };
+
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById("attachMenu");
+            const btn = document.querySelector(".attach-btn");
+            if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.remove("active");
+            }
+        });
+    </script>
+
+    <!-- Arkaplan Parçacık Animasyonu -->
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        const particles = Array.from({ length: 40 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 2.5 + 1,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            color: ['#a855f7', '#6366f1', '#38bdf8'][Math.floor(Math.random() * 3)]
+        }));
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((p, i) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = p.color;
+                ctx.fill();
+
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = `rgba(168, 85, 247, ${1 - dist / 120 * 0.7})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+
+</body>
+</html>
