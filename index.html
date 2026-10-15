@@ -341,8 +341,8 @@
     </div>
 
     <script>
-        // AI Studio'dan aldığınız AIzaSy... ile başlayan anahtarınızı buraya yazın:
-        const API_KEY = "AIzaSy_BURAYA_AI_STUDIO_API_KEY_YAZIN";
+        // API Anahtarınız eklendi:
+        const API_KEY = "AQ.Ab8RN6L-oRIEgaGrsnj89xeYVjcZHMucPb03MFW2gLJeLFbiAQ";
         const MODEL_NAME = "gemini-2.5-flash";
 
         let sohbetGecmisi = [];
@@ -380,7 +380,7 @@
                 const data = await response.json();
                 document.getElementById(loadingId)?.remove();
 
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                if (data.candidates && data.candidates[0] && data.candidates[0].content.parts[0].text) {
                     const aiReply = data.candidates[0].content.parts[0].text;
                     chatBox.innerHTML += `<div class="message gemini-message">${aiReply}</div>`;
                 } else if (data.error) {
