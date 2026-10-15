@@ -17,112 +17,165 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
+
         body {
-            background-color: #0f172a;
-            color: #f8fafc;
+            background: linear-gradient(135deg, #0f0c20 0%, #150d2a 50%, #080512 100%);
+            color: #f1f5f9;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 20px;
         }
+
         .chat-container {
             width: 100%;
-            max-width: 600px;
-            height: 85vh;
-            background: #1e293b;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            max-width: 750px;
+            height: 88vh;
+            background: rgba(23, 15, 45, 0.75);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(139, 92, 246, 0.15);
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid #334155;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .chat-header {
-            background: #0f172a;
-            padding: 20px;
+            background: rgba(15, 12, 32, 0.85);
+            padding: 22px 28px;
             text-align: center;
-            border-bottom: 1px solid #334155;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
         }
+
         .chat-header h2 {
-            font-size: 1.25rem;
-            color: #38bdf8;
-            font-weight: 600;
+            font-size: 1.5rem;
+            background: linear-gradient(90deg, #a855f7, #3b82f6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
+
         .chat-header p {
             font-size: 0.85rem;
             color: #94a3b8;
-            margin-top: 4px;
+            margin-top: 5px;
+            font-weight: 500;
         }
+
         #chat-box {
             flex: 1;
-            padding: 20px;
+            padding: 24px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            background: #0f172a;
+            gap: 16px;
         }
+
+        /* Özel kaydırma çubuğu */
+        #chat-box::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-box::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+        }
+
         .message {
-            max-width: 75%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            line-height: 1.4;
+            max-width: 80%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 0.98rem;
+            line-height: 1.5;
             word-wrap: break-word;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease-in-out;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .user-message {
-            background: #2563eb;
-            color: white;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            color: #ffffff;
             align-self: flex-end;
-            border-bottom-right-radius: 2px;
+            border-bottom-right-radius: 4px;
         }
+
         .gemini-message {
-            background: #334155;
-            color: #f8fafc;
+            background: rgba(30, 27, 60, 0.85);
+            color: #f1f5f9;
             align-self: flex-start;
-            border-bottom-left-radius: 2px;
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
         }
+
         .loading-message {
-            background: #334155;
-            color: #94a3b8;
+            background: rgba(30, 27, 60, 0.6);
+            color: #c084fc;
             align-self: flex-start;
             font-style: italic;
+            border: 1px dashed rgba(168, 85, 247, 0.4);
         }
+
         .input-area {
-            padding: 15px 20px;
-            background: #1e293b;
+            padding: 18px 24px;
+            background: rgba(15, 12, 32, 0.9);
             display: flex;
-            gap: 10px;
-            border-top: 1px solid #334155;
+            gap: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
+
         input {
             flex: 1;
-            padding: 12px 16px;
-            background: #0f172a;
-            border: 1px solid #475569;
-            border-radius: 8px;
-            color: white;
-            font-size: 0.95rem;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 1rem;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.3s ease;
         }
+
+        input::placeholder {
+            color: #64748b;
+        }
+
         input:focus {
-            border-color: #38bdf8;
+            border-color: #a855f7;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.25);
         }
+
         button {
-            padding: 0 20px;
-            background: #38bdf8;
-            color: #0f172a;
+            padding: 0 24px;
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+            color: #ffffff;
             border: none;
-            border-radius: 8px;
-            font-weight: 600;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.98rem;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
         }
+
         button:hover {
-            background: #0ea5e9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+            background: linear-gradient(135deg, #b875f8 0%, #7376f2 100%);
+        }
+
+        button:active {
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -130,8 +183,8 @@
 
     <div class="chat-container">
         <div class="chat-header">
-            <h2>Lexus AI Asistanı 🚀</h2>
-            <p>Gemini altyapısıyla güçlendirilmiştir</p>
+            <h2>Lexus AI ⚡</h2>
+            <p>Gelişmiş Yapay Zeka Asistanı</p>
         </div>
         
         <div id="chat-box">
@@ -139,7 +192,7 @@
         </div>
 
         <div class="input-area">
-            <input type="text" id="user-input" placeholder="Bir şeyler yazın..." onkeydown="if(event.key === 'Enter') mesajGonder()">
+            <input type="text" id="user-input" placeholder="Lexus AI'a bir şeyler sorun..." onkeydown="if(event.key === 'Enter') mesajGonder()">
             <button onclick="mesajGonder()">Gönder</button>
         </div>
     </div>
@@ -156,31 +209,40 @@
 
             if (!userText) return;
 
-            // Kullanıcı mesajını ekrana ekle
+            // Kullanıcı mesajı
             chatBox.innerHTML += `<div class="message user-message">${userText}</div>`;
             inputField.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Yükleniyor balonu ekle
+            // Yükleniyor balonu
             const loadingId = "loading-" + Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}" class="message loading-message">Lexus AI düşünüyor...</div>`;
+            chatBox.innerHTML += `<div id="${loadingId}" class="message loading-message">Lexus AI yanıt üretiyor...</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            try {
-                const response = await ai.models.generateContent({
-                    model: 'gemini-3.8-flash',
-                    contents: userText,
-                });
+            // Öncelikli model listesi (503 yoğunluk hatası verirse sıradakine geçer)
+            const models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash'];
+            let success = false;
 
-                // Yükleniyor balonunu kaldır
-                document.getElementById(loadingId).remove();
+            for (const modelName of models) {
+                try {
+                    const response = await ai.models.generateContent({
+                        model: modelName,
+                        contents: userText,
+                    });
 
-                // Gemini yanıtını ekrana ekle
-                chatBox.innerHTML += `<div class="message gemini-message">${response.text}</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (error) {
-                document.getElementById(loadingId).remove();
-                chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Hata oluştu: ${error.message}</div>`;
+                    document.getElementById(loadingId)?.remove();
+                    chatBox.innerHTML += `<div class="message gemini-message">${response.text}</div>`;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    success = true;
+                    break; 
+                } catch (error) {
+                    console.warn(`${modelName} denenirken hata oluştu:`, error);
+                }
+            }
+
+            if (!success) {
+                document.getElementById(loadingId)?.remove();
+                chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171; border-color: #ef4444;">Sunucu yoğunluğu devam ediyor. Lütfen birkaç saniye sonra tekrar deneyin.</div>`;
                 chatBox.scrollTop = chatBox.scrollHeight;
             }
         };
