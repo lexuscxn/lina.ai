@@ -112,6 +112,13 @@
             transition: all 0.2s ease;
         }
 
+        .history-item.active-chat {
+            background: rgba(217, 70, 239, 0.25);
+            border-color: rgba(217, 70, 239, 0.6);
+            color: #ffffff;
+            font-weight: 700;
+        }
+
         .history-item:hover {
             background: rgba(217, 70, 239, 0.18);
             border-color: rgba(217, 70, 239, 0.4);
@@ -458,7 +465,7 @@
             box-shadow: 0 12px 35px rgba(217, 70, 239, 0.6);
         }
 
-        /* MODAL POPUP (Hesap ve Ayarlar için) */
+        /* MODAL POPUP */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -550,6 +557,41 @@
             border-color: #d946ef;
         }
 
+        /* Sosyal Medya Giriş Butonları */
+        .social-login-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.04);
+            color: #f1f5f9;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .social-btn:hover {
+            background: rgba(217, 70, 239, 0.2);
+            border-color: rgba(217, 70, 239, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .social-btn.google:hover { background: rgba(234, 67, 53, 0.25); border-color: rgba(234, 67, 53, 0.5); }
+        .social-btn.discord:hover { background: rgba(88, 101, 242, 0.25); border-color: rgba(88, 101, 242, 0.5); }
+        .social-btn.apple:hover { background: rgba(255, 255, 255, 0.25); border-color: rgba(255, 255, 255, 0.5); }
+        .social-btn.github:hover { background: rgba(110, 84, 148, 0.25); border-color: rgba(110, 84, 148, 0.5); }
+
         .save-modal-btn {
             background: linear-gradient(135deg, #d946ef, #8b5cf6);
             color: white;
@@ -572,7 +614,7 @@
     <!-- Canlı Hareketli Arkaplan Tuvali -->
     <canvas id="bg-canvas"></canvas>
 
-    <!-- Sol Yan Menü: Geçmiş Sohbetler ve Hesaplar -->
+    <!-- Sol Yan Menü -->
     <div class="sidebar">
         <button class="new-chat-btn" onclick="yeniSohbet()">
             <span>+</span> Yeni Sohbet
@@ -598,7 +640,7 @@
         <div class="chat-container">
             <div class="chat-header">
                 <div class="logo-container">
-                    <img src="logo.jpg" alt="Linda.Ai Logo" class="brand-logo" onerror="this.src='https://raw.githubusercontent.com/lexuscxn/lexus.ai/main/logo.jpg'">
+                    <img id="main-logo-img" src="logo.jpg" alt="Linda.Ai Logo" class="brand-logo" onerror="logoYuklemeHatasi(this)">
                     <div class="header-info">
                         <h2>Linda.Ai ✨</h2>
                         <p><span class="status-dot"></span> Yapay Zeka Asistanı Çevrimiçi</p>
@@ -625,11 +667,11 @@
         </div>
     </div>
 
-    <!-- HESAP EKLEME MODALI -->
+    <!-- HESAP EKLEME & SOSYAL MEYDA GİRİŞ MODALI -->
     <div class="modal-overlay" id="accountModal">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>Hesap Yönetimi</h3>
+                <h3>Hesap Ekle / Değiştir</h3>
                 <button class="close-modal-btn" onclick="closeModal('accountModal')">✕</button>
             </div>
             <div class="modal-body">
@@ -641,7 +683,18 @@
                     <label>E-Posta Adresi</label>
                     <input type="email" id="account-email-input" class="form-control" value="user@linda.ai">
                 </div>
-                <button class="save-modal-btn" onclick="saveAccountInfo()">Hesabı Güncelle / Değiştir</button>
+
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Hızlı Giriş Yap / Hesap Bağla</label>
+                    <div class="social-login-grid">
+                        <button class="social-btn google" onclick="socialLogin('Google')">🌐 Google</button>
+                        <button class="social-btn discord" onclick="socialLogin('Discord')">👾 Discord</button>
+                        <button class="social-btn apple" onclick="socialLogin('Apple')">🍏 Apple</button>
+                        <button class="social-btn github" onclick="socialLogin('GitHub')">🐙 GitHub</button>
+                    </div>
+                </div>
+
+                <button class="save-modal-btn" onclick="saveAccountInfo()">Hesabı Güncelle</button>
             </div>
         </div>
     </div>
@@ -663,7 +716,7 @@
                 </div>
                 <div class="form-group">
                     <label>API Key (Google AI Studio)</label>
-                    <input type="password" id="api-key-input" class="form-control" value="AQ.Ab8RN6L-oRIEgaGrsnj89xeYVjcZHMucPb03MFW2gLJeLFbiAQ">
+                    <input type="password" id="api-key-input" class="form-control" value="AQ.Ab8RN6KaQnDmmuEJDdc27lHer2276B4i14mOmgT6ydtkCfAkOA">
                 </div>
                 <button class="save-modal-btn" onclick="saveSettings()">Ayarları Kaydet</button>
             </div>
@@ -672,9 +725,23 @@
 
     <!-- JAVASCRIPT MANTIĞI -->
     <script>
-        let API_KEY = "AQ.Ab8RN6L-oRIEgaGrsnj89xeYVjcZHMucPb03MFW2gLJeLFbiAQ";
+        let API_KEY = "AQ.Ab8RN6KaQnDmmuEJDdc27lHer2276B4i14mOmgT6ydtkCfAkOA";
         let MODEL_NAME = "gemini-2.5-flash";
-        let sohbetGecmisi = [];
+
+        // Geçmiş sohbet veri deposu
+        let sohbetDeposu = [];
+        let aktifSohbetId = null;
+
+        // Sayfa yüklendiğinde ilk sohbeti oluştur
+        window.onload = function() {
+            yeniSohbet();
+        };
+
+        function logoYuklemeHatasi(img) {
+            // Görsel yüklenemezse varsayılan logo alternatifine yönlendir
+            img.onerror = null;
+            img.src = 'https://raw.githubusercontent.com/lexuscxn/lexus.ai/main/logo.jpg';
+        }
 
         window.mesajGonder = async function() {
             const inputField = document.getElementById("user-input");
@@ -683,13 +750,27 @@
 
             if (!userText) return;
 
-            if (sohbetGecmisi.length === 0) {
-                gecmiseEkle(userText);
+            // Aktif sohbet nesnesini al veya oluştur
+            let mevcutSohbet = sohbetDeposu.find(s => s.id === aktifSohbetId);
+            if (!mevcutSohbet) {
+                mevcutSohbet = {
+                    id: Date.now(),
+                    title: userText.length > 25 ? userText.substring(0, 25) + '...' : userText,
+                    messages: []
+                };
+                sohbetDeposu.unshift(mevcutSohbet);
+                aktifSohbetId = mevcutSohbet.id;
+            } else if (mevcutSohbet.messages.length === 0) {
+                mevcutSohbet.title = userText.length > 25 ? userText.substring(0, 25) + '...' : userText;
             }
 
+            // Kullanıcı mesajını kaydet
+            mevcutSohbet.messages.push({ sender: 'user', text: userText });
             chatBox.innerHTML += `<div class="message user-message">${userText}</div>`;
             inputField.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
+
+            sohbetListesiniGuncelle();
 
             const loadingId = "loading-" + Date.now();
             chatBox.innerHTML += `<div id="${loadingId}" class="message loading-message">Linda.Ai yanıt hazırlıyor...</div>`;
@@ -711,9 +792,11 @@
 
                 if (data.candidates && data.candidates[0] && data.candidates[0].content.parts[0].text) {
                     const aiReply = data.candidates[0].content.parts[0].text;
+                    mevcutSohbet.messages.push({ sender: 'ai', text: aiReply });
                     chatBox.innerHTML += `<div class="message gemini-message">${aiReply}</div>`;
                 } else if (data.error) {
-                    chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Hata: ${data.error.message}</div>`;
+                    const errorMsg = "Hata: " + data.error.message;
+                    chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">${errorMsg}</div>`;
                 } else {
                     chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Yanıt alınamadı.</div>`;
                 }
@@ -726,21 +809,48 @@
             }
         };
 
-        function gecmiseEkle(baslik) {
-            sohbetGecmisi.push(baslik);
-            const historyList = document.getElementById("history-list");
-            historyList.innerHTML = "";
-            sohbetGecmisi.forEach((item) => {
-                historyList.innerHTML += `<div class="history-item">${item}</div>`;
-            });
+        window.yeniSohbet = function() {
+            const yeniId = Date.now();
+            const yeniSohbetObj = {
+                id: yeniId,
+                title: "Yeni Sohbet",
+                messages: []
+            };
+            sohbetDeposu.unshift(yeniSohbetObj);
+            aktifSohbetId = yeniId;
+
+            const chatBox = document.getElementById("chat-box");
+            chatBox.innerHTML = `<div class="message gemini-message">Merhaba! Ben Linda.Ai. Size bugün nasıl yardımcı olabilirim?</div>`;
+            
+            sohbetListesiniGuncelle();
+        };
+
+        function sohbetiYukle(id) {
+            aktifSohbetId = id;
+            const sohbet = sohbetDeposu.find(s => s.id === id);
+            const chatBox = document.getElementById("chat-box");
+            
+            if (!sohbet || sohbet.messages.length === 0) {
+                chatBox.innerHTML = `<div class="message gemini-message">Merhaba! Ben Linda.Ai. Size bugün nasıl yardımcı olabilirim?</div>`;
+            } else {
+                chatBox.innerHTML = "";
+                sohbet.messages.forEach(m => {
+                    const msgClass = m.sender === 'user' ? 'user-message' : 'gemini-message';
+                    chatBox.innerHTML += `<div class="message ${msgClass}">${m.text}</div>`;
+                });
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+            sohbetListesiniGuncelle();
         }
 
-        window.yeniSohbet = function() {
-            const chatBox = document.getElementById("chat-box");
-            chatBox.innerHTML = `<div class="message gemini-message">Yeni sohbet başlatıldı! Size nasıl yardımcı olabilirim?</div>`;
-            sohbetGecmisi = [];
-            document.getElementById("history-list").innerHTML = "";
-        };
+        function sohbetListesiniGuncelle() {
+            const historyList = document.getElementById("history-list");
+            historyList.innerHTML = "";
+            sohbetDeposu.forEach((s) => {
+                const activeClass = s.id === aktifSohbetId ? 'active-chat' : '';
+                historyList.innerHTML += `<div class="history-item ${activeClass}" onclick="sohbetiYukle(${s.id})">${s.title}</div>`;
+            });
+        }
 
         /* Modal Fonksiyonları */
         window.openModal = function(id) {
@@ -758,6 +868,13 @@
             document.getElementById("display-user-email").innerText = email;
             document.getElementById("user-avatar").innerText = name.charAt(0).toUpperCase();
             closeModal("accountModal");
+        };
+
+        window.socialLogin = function(provider) {
+            document.getElementById("account-name-input").value = provider + " Kullanıcısı";
+            document.getElementById("account-email-input").value = provider.toLowerCase() + "@linda.ai";
+            saveAccountInfo();
+            alert(`${provider} hesabı başarıyla bağlandı!`);
         };
 
         window.saveSettings = function() {
@@ -813,7 +930,6 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Logo Renk Paleti: Mor, Pembe, Leylak, Lavanta
         const colors = ['#f472b6', '#d946ef', '#a855f7', '#c084fc', '#818cf8'];
 
         const particles = Array.from({ length: 50 }, () => ({
