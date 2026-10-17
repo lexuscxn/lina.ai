@@ -4,8 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Linda.Ai - Gelişmiş Yapay Zeka Asistanı</title>
-    <!-- Favicon (Sayfa Logosu) -->
-    <link rel="icon" type="image/jpeg" href="logo.jpg">
+
+    <!-- Firebase SDK (Gerçek Kimlik Doğrulama) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithPopup, 
+            GoogleAuthProvider, 
+            GithubAuthProvider,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            onAuthStateChanged,
+            signOut
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Firebase Yapılandırması (Kendi Firebase Projenizin bilgilerini buraya yazabilirsiniz)
+        const firebaseConfig = {
+            apiKey: "AIzaSy_BURAYA_FIREBASE_API_KEY_GELECEK",
+            authDomain: "linda-ai-app.firebaseapp.com",
+            projectId: "linda-ai-app",
+            storageBucket: "linda-ai-app.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        window.firebaseAuth = auth;
+        window.GoogleAuthProvider = GoogleAuthProvider;
+        window.GithubAuthProvider = GithubAuthProvider;
+        window.signInWithPopup = signInWithPopup;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signOut = signOut;
+
+        // Kullanıcı Oturum Durumunu Takip Et (Her F5'te Otomatik Tanır)
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById("display-user-name").innerText = user.displayName || user.email.split('@')[0];
+                document.getElementById("display-user-email").innerText = user.email;
+                document.getElementById("user-avatar").innerText = (user.displayName || user.email).charAt(0).toUpperCase();
+                if(user.photoURL) {
+                    document.getElementById("user-avatar").innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;border-radius:50%;">`;
+                }
+                document.getElementById("logout-btn").style.display = "block";
+            } else {
+                document.getElementById("display-user-name").innerText = "Misafir Kullanıcı";
+                document.getElementById("display-user-email").innerText = "Giriş Yapılmadı";
+                document.getElementById("user-avatar").innerText = "M";
+                document.getElementById("logout-btn").style.display = "none";
+            }
+        });
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -110,6 +162,9 @@
             overflow: hidden;
             text-overflow: ellipsis;
             transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .history-item.active-chat {
@@ -123,17 +178,30 @@
             background: rgba(217, 70, 239, 0.18);
             border-color: rgba(217, 70, 239, 0.4);
             color: #ffffff;
-            transform: translateX(4px);
         }
 
-        /* Sol Alt Menü (Profil ve Ayarlar) */
+        .delete-chat-btn {
+            background: none;
+            border: none;
+            color: #f87171;
+            opacity: 0.6;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 2px 6px;
+        }
+
+        .delete-chat-btn:hover {
+            opacity: 1;
+        }
+
+        /* Sol Alt Menü */
         .sidebar-footer {
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             padding-top: 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
+            gap: 8px;
         }
 
         .user-profile-card {
@@ -147,6 +215,7 @@
             cursor: pointer;
             flex: 1;
             transition: background 0.2s;
+            overflow: hidden;
         }
 
         .user-profile-card:hover {
@@ -165,6 +234,7 @@
             font-size: 0.9rem;
             color: white;
             box-shadow: 0 0 10px rgba(244, 114, 182, 0.4);
+            flex-shrink: 0;
         }
 
         .user-info {
@@ -190,9 +260,9 @@
             text-overflow: ellipsis;
         }
 
-        .settings-icon-btn {
-            width: 42px;
-            height: 42px;
+        .icon-btn {
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -201,14 +271,14 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        .settings-icon-btn:hover {
+        .icon-btn:hover {
             background: rgba(217, 70, 239, 0.2);
             color: #ffffff;
-            transform: rotate(45deg);
         }
 
         /* Ana Sohbet Alanı */
@@ -252,19 +322,29 @@
             gap: 16px;
         }
 
-        .brand-logo {
-            width: 48px;
-            height: 48px;
+        /* Saf CSS Glowing Amblem (JPG Yerine) */
+        .css-emblem {
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid rgba(217, 70, 239, 0.5);
-            box-shadow: 0 0 20px rgba(217, 70, 239, 0.5);
-            animation: logoPulse 4s infinite ease-in-out;
+            background: conic-gradient(from 0deg, #d946ef, #a855f7, #38bdf8, #f472b6, #d946ef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(217, 70, 239, 0.6);
+            animation: rotateEmblem 8s linear infinite;
         }
 
-        @keyframes logoPulse {
-            0%, 100% { transform: scale(1) rotate(0deg); box-shadow: 0 0 20px rgba(217, 70, 239, 0.5); }
-            50% { transform: scale(1.05) rotate(180deg); box-shadow: 0 0 35px rgba(244, 114, 182, 0.8); }
+        .css-emblem-inner {
+            width: 22px;
+            height: 22px;
+            background: #0b0518;
+            border-radius: 50%;
+        }
+
+        @keyframes rotateEmblem {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .header-info h2 {
@@ -351,7 +431,7 @@
             border: 1px dashed rgba(217, 70, 239, 0.5);
         }
 
-        /* Gelişmiş Input Alanı */
+        /* Input Alanı */
         .input-area {
             padding: 22px 30px;
             background: rgba(14, 8, 30, 0.85);
@@ -557,7 +637,6 @@
             border-color: #d946ef;
         }
 
-        /* Sosyal Medya Giriş Butonları */
         .social-login-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -587,11 +666,6 @@
             transform: translateY(-2px);
         }
 
-        .social-btn.google:hover { background: rgba(234, 67, 53, 0.25); border-color: rgba(234, 67, 53, 0.5); }
-        .social-btn.discord:hover { background: rgba(88, 101, 242, 0.25); border-color: rgba(88, 101, 242, 0.5); }
-        .social-btn.apple:hover { background: rgba(255, 255, 255, 0.25); border-color: rgba(255, 255, 255, 0.5); }
-        .social-btn.github:hover { background: rgba(110, 84, 148, 0.25); border-color: rgba(110, 84, 148, 0.5); }
-
         .save-modal-btn {
             background: linear-gradient(135deg, #d946ef, #8b5cf6);
             color: white;
@@ -611,7 +685,6 @@
 </head>
 <body>
 
-    <!-- Canlı Hareketli Arkaplan Tuvali -->
     <canvas id="bg-canvas"></canvas>
 
     <!-- Sol Yan Menü -->
@@ -625,13 +698,14 @@
 
         <div class="sidebar-footer">
             <div class="user-profile-card" onclick="openModal('accountModal')">
-                <div class="avatar" id="user-avatar">L</div>
+                <div class="avatar" id="user-avatar">M</div>
                 <div class="user-info">
-                    <div class="user-name" id="display-user-name">Lexus User</div>
-                    <div class="user-email" id="display-user-email">user@linda.ai</div>
+                    <div class="user-name" id="display-user-name">Misafir Kullanıcı</div>
+                    <div class="user-email" id="display-user-email">Giriş Yapılmadı</div>
                 </div>
             </div>
-            <div class="settings-icon-btn" onclick="openModal('settingsModal')" title="Ayarlar">⚙️</div>
+            <div class="icon-btn" onclick="openModal('settingsModal')" title="Ayarlar">⚙️</div>
+            <div class="icon-btn" id="logout-btn" onclick="cikisYap()" title="Çıkış Yap" style="display:none; color:#f87171;">🚪</div>
         </div>
     </div>
 
@@ -640,7 +714,7 @@
         <div class="chat-container">
             <div class="chat-header">
                 <div class="logo-container">
-                    <img id="main-logo-img" src="logo.jpg" alt="Linda.Ai Logo" class="brand-logo" onerror="logoYuklemeHatasi(this)">
+                    <div class="css-emblem"><div class="css-emblem-inner"></div></div>
                     <div class="header-info">
                         <h2>Linda.Ai ✨</h2>
                         <p><span class="status-dot"></span> Yapay Zeka Asistanı Çevrimiçi</p>
@@ -648,9 +722,7 @@
                 </div>
             </div>
             
-            <div id="chat-box">
-                <div class="message gemini-message">Merhaba! Ben Linda.Ai. Size bugün nasıl yardımcı olabilirim?</div>
-            </div>
+            <div id="chat-box"></div>
 
             <div class="input-area">
                 <div class="attach-btn" onclick="toggleMenu()" title="Eklenti Menüsü">+</div>
@@ -667,34 +739,31 @@
         </div>
     </div>
 
-    <!-- HESAP EKLEME & SOSYAL MEYDA GİRİŞ MODALI -->
+    <!-- HESAP / FIREBASE GİRİŞ MODALI -->
     <div class="modal-overlay" id="accountModal">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>Hesap Ekle / Değiştir</h3>
+                <h3>Gerçek Hesap Girişi</h3>
                 <button class="close-modal-btn" onclick="closeModal('accountModal')">✕</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Kullanıcı Adı</label>
-                    <input type="text" id="account-name-input" class="form-control" value="Lexus User">
+                    <label>E-Posta Adresi</label>
+                    <input type="email" id="email-input" class="form-control" placeholder="ornek@email.com">
                 </div>
                 <div class="form-group">
-                    <label>E-Posta Adresi</label>
-                    <input type="email" id="account-email-input" class="form-control" value="user@linda.ai">
+                    <label>Şifre</label>
+                    <input type="password" id="password-input" class="form-control" placeholder="••••••••">
                 </div>
+                <button class="save-modal-btn" onclick="emailGirisYap()">E-Posta ile Giriş / Kayıt</button>
 
-                <div class="form-group" style="margin-top: 8px;">
-                    <label>Hızlı Giriş Yap / Hesap Bağla</label>
+                <div class="form-group" style="margin-top: 10px;">
+                    <label>Tek Tıkla Giriş Yap</label>
                     <div class="social-login-grid">
-                        <button class="social-btn google" onclick="socialLogin('Google')">🌐 Google</button>
-                        <button class="social-btn discord" onclick="socialLogin('Discord')">👾 Discord</button>
-                        <button class="social-btn apple" onclick="socialLogin('Apple')">🍏 Apple</button>
-                        <button class="social-btn github" onclick="socialLogin('GitHub')">🐙 GitHub</button>
+                        <button class="social-btn" onclick="googleGirisYap()">🌐 Google</button>
+                        <button class="social-btn" onclick="githubGirisYap()">🐙 GitHub</button>
                     </div>
                 </div>
-
-                <button class="save-modal-btn" onclick="saveAccountInfo()">Hesabı Güncelle</button>
             </div>
         </div>
     </div>
@@ -723,24 +792,31 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT MANTIĞI -->
     <script>
-        let API_KEY = "AQ.Ab8RN6KaQnDmmuEJDdc27lHer2276B4i14mOmgT6ydtkCfAkOA";
-        let MODEL_NAME = "gemini-2.5-flash";
+        let API_KEY = localStorage.getItem("LINDA_API_KEY") || "AQ.Ab8RN6KaQnDmmuEJDdc27lHer2276B4i14mOmgT6ydtkCfAkOA";
+        let MODEL_NAME = localStorage.getItem("LINDA_MODEL") || "gemini-2.5-flash";
 
-        // Geçmiş sohbet veri deposu
-        let sohbetDeposu = [];
-        let aktifSohbetId = null;
+        // Sohbet Deposu (localStorage ile Kalıcı Hafıza)
+        let sohbetDeposu = JSON.parse(localStorage.getItem("LINDA_CHATS")) || [];
+        let aktifSohbetId = localStorage.getItem("LINDA_ACTIVE_CHAT_ID") || null;
 
-        // Sayfa yüklendiğinde ilk sohbeti oluştur
         window.onload = function() {
-            yeniSohbet();
+            document.getElementById("api-key-input").value = API_KEY;
+            document.getElementById("model-select").value = MODEL_NAME;
+
+            if (sohbetDeposu.length === 0) {
+                yeniSohbet();
+            } else {
+                if(!aktifSohbetId || !sohbetDeposu.find(s => s.id == aktifSohbetId)) {
+                    aktifSohbetId = sohbetDeposu[0].id;
+                }
+                sohbetiYukle(aktifSohbetId);
+            }
         };
 
-        function logoYuklemeHatasi(img) {
-            // Görsel yüklenemezse varsayılan logo alternatifine yönlendir
-            img.onerror = null;
-            img.src = 'https://raw.githubusercontent.com/lexuscxn/lexus.ai/main/logo.jpg';
+        function verileriKaydet() {
+            localStorage.setItem("LINDA_CHATS", JSON.stringify(sohbetDeposu));
+            localStorage.setItem("LINDA_ACTIVE_CHAT_ID", aktifSohbetId);
         }
 
         window.mesajGonder = async function() {
@@ -750,22 +826,22 @@
 
             if (!userText) return;
 
-            // Aktif sohbet nesnesini al veya oluştur
-            let mevcutSohbet = sohbetDeposu.find(s => s.id === aktifSohbetId);
+            let mevcutSohbet = sohbetDeposu.find(s => s.id == aktifSohbetId);
             if (!mevcutSohbet) {
                 mevcutSohbet = {
                     id: Date.now(),
-                    title: userText.length > 25 ? userText.substring(0, 25) + '...' : userText,
+                    title: userText.length > 22 ? userText.substring(0, 22) + '...' : userText,
                     messages: []
                 };
                 sohbetDeposu.unshift(mevcutSohbet);
                 aktifSohbetId = mevcutSohbet.id;
             } else if (mevcutSohbet.messages.length === 0) {
-                mevcutSohbet.title = userText.length > 25 ? userText.substring(0, 25) + '...' : userText;
+                mevcutSohbet.title = userText.length > 22 ? userText.substring(0, 22) + '...' : userText;
             }
 
-            // Kullanıcı mesajını kaydet
             mevcutSohbet.messages.push({ sender: 'user', text: userText });
+            verileriKaydet();
+
             chatBox.innerHTML += `<div class="message user-message">${userText}</div>`;
             inputField.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
@@ -773,7 +849,7 @@
             sohbetListesiniGuncelle();
 
             const loadingId = "loading-" + Date.now();
-            chatBox.innerHTML += `<div id="${loadingId}" class="message loading-message">Linda.Ai yanıt hazırlıyor...</div>`;
+            chatBox.innerHTML += `<div id="${loadingId}" class="message loading-message">Linda.Ai düşünüyor...</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
@@ -793,10 +869,10 @@
                 if (data.candidates && data.candidates[0] && data.candidates[0].content.parts[0].text) {
                     const aiReply = data.candidates[0].content.parts[0].text;
                     mevcutSohbet.messages.push({ sender: 'ai', text: aiReply });
+                    verileriKaydet();
                     chatBox.innerHTML += `<div class="message gemini-message">${aiReply}</div>`;
                 } else if (data.error) {
-                    const errorMsg = "Hata: " + data.error.message;
-                    chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">${errorMsg}</div>`;
+                    chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Hata: ${data.error.message}</div>`;
                 } else {
                     chatBox.innerHTML += `<div class="message gemini-message" style="color:#f87171;">Yanıt alınamadı.</div>`;
                 }
@@ -818,22 +894,22 @@
             };
             sohbetDeposu.unshift(yeniSohbetObj);
             aktifSohbetId = yeniId;
+            verileriKaydet();
 
-            const chatBox = document.getElementById("chat-box");
-            chatBox.innerHTML = `<div class="message gemini-message">Merhaba! Ben Linda.Ai. Size bugün nasıl yardımcı olabilirim?</div>`;
-            
-            sohbetListesiniGuncelle();
+            sohbetiYukle(yeniId);
         };
 
         function sohbetiYukle(id) {
             aktifSohbetId = id;
-            const sohbet = sohbetDeposu.find(s => s.id === id);
+            verileriKaydet();
+
+            const sohbet = sohbetDeposu.find(s => s.id == id);
             const chatBox = document.getElementById("chat-box");
             
+            chatBox.innerHTML = "";
             if (!sohbet || sohbet.messages.length === 0) {
                 chatBox.innerHTML = `<div class="message gemini-message">Merhaba! Ben Linda.Ai. Size bugün nasıl yardımcı olabilirim?</div>`;
             } else {
-                chatBox.innerHTML = "";
                 sohbet.messages.forEach(m => {
                     const msgClass = m.sender === 'user' ? 'user-message' : 'gemini-message';
                     chatBox.innerHTML += `<div class="message ${msgClass}">${m.text}</div>`;
@@ -843,52 +919,91 @@
             sohbetListesiniGuncelle();
         }
 
+        function sohbetiSil(e, id) {
+            e.stopPropagation();
+            sohbetDeposu = sohbetDeposu.filter(s => s.id != id);
+            if (sohbetDeposu.length === 0) {
+                yeniSohbet();
+            } else {
+                if (aktifSohbetId == id) {
+                    aktifSohbetId = sohbetDeposu[0].id;
+                }
+                verileriKaydet();
+                sohbetiYukle(aktifSohbetId);
+            }
+        }
+
         function sohbetListesiniGuncelle() {
             const historyList = document.getElementById("history-list");
             historyList.innerHTML = "";
             sohbetDeposu.forEach((s) => {
-                const activeClass = s.id === aktifSohbetId ? 'active-chat' : '';
-                historyList.innerHTML += `<div class="history-item ${activeClass}" onclick="sohbetiYukle(${s.id})">${s.title}</div>`;
+                const activeClass = s.id == aktifSohbetId ? 'active-chat' : '';
+                historyList.innerHTML += `
+                    <div class="history-item ${activeClass}" onclick="sohbetiYukle(${s.id})">
+                        <span>${s.title}</span>
+                        <button class="delete-chat-btn" onclick="sohbetiSil(event, ${s.id})">✕</button>
+                    </div>`;
             });
         }
 
+        /* FIREBASE AUTHENTICATION GİRİŞ FONKSİYONLARI */
+        window.googleGirisYap = async function() {
+            try {
+                const provider = new window.GoogleAuthProvider();
+                await window.signInWithPopup(window.firebaseAuth, provider);
+                closeModal("accountModal");
+            } catch (error) {
+                alert("Google Giriş Hatası: " + error.message);
+            }
+        };
+
+        window.githubGirisYap = async function() {
+            try {
+                const provider = new window.GithubAuthProvider();
+                await window.signInWithPopup(window.firebaseAuth, provider);
+                closeModal("accountModal");
+            } catch (error) {
+                alert("GitHub Giriş Hatası: " + error.message);
+            }
+        };
+
+        window.emailGirisYap = async function() {
+            const email = document.getElementById("email-input").value;
+            const password = document.getElementById("password-input").value;
+            if(!email || !password) return alert("Lütfen email ve şifre girin.");
+
+            try {
+                await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+                closeModal("accountModal");
+            } catch (error) {
+                try {
+                    await window.createUserWithEmailAndPassword(window.firebaseAuth, email, password);
+                    closeModal("accountModal");
+                } catch (err) {
+                    alert("Giriş/Kayıt Hatası: " + err.message);
+                }
+            }
+        };
+
+        window.cikisYap = async function() {
+            await window.signOut(window.firebaseAuth);
+        };
+
         /* Modal Fonksiyonları */
-        window.openModal = function(id) {
-            document.getElementById(id).classList.add("active");
-        };
-
-        window.closeModal = function(id) {
-            document.getElementById(id).classList.remove("active");
-        };
-
-        window.saveAccountInfo = function() {
-            const name = document.getElementById("account-name-input").value;
-            const email = document.getElementById("account-email-input").value;
-            document.getElementById("display-user-name").innerText = name;
-            document.getElementById("display-user-email").innerText = email;
-            document.getElementById("user-avatar").innerText = name.charAt(0).toUpperCase();
-            closeModal("accountModal");
-        };
-
-        window.socialLogin = function(provider) {
-            document.getElementById("account-name-input").value = provider + " Kullanıcısı";
-            document.getElementById("account-email-input").value = provider.toLowerCase() + "@linda.ai";
-            saveAccountInfo();
-            alert(`${provider} hesabı başarıyla bağlandı!`);
-        };
+        window.openModal = function(id) { document.getElementById(id).classList.add("active"); };
+        window.closeModal = function(id) { document.getElementById(id).classList.remove("active"); };
 
         window.saveSettings = function() {
             MODEL_NAME = document.getElementById("model-select").value;
             API_KEY = document.getElementById("api-key-input").value;
-            alert("Ayarlar başarıyla güncellendi!");
+            localStorage.setItem("LINDA_API_KEY", API_KEY);
+            localStorage.setItem("LINDA_MODEL", MODEL_NAME);
+            alert("Ayarlar kaydedildi!");
             closeModal("settingsModal");
         };
 
         /* Eklenti Menüsü */
-        window.toggleMenu = function() {
-            document.getElementById("attachMenu").classList.toggle("active");
-        };
-
+        window.toggleMenu = function() { document.getElementById("attachMenu").classList.toggle("active"); };
         window.dosyaSecTetikle = function() {
             document.getElementById("attachMenu").classList.remove("active");
             document.getElementById("file-input").click();
@@ -918,7 +1033,7 @@
         });
     </script>
 
-    <!-- LOGO RENKLERİNDE CANLI PARÇACIK ANİMASYONU -->
+    <!-- Parçacık Arkaplan Animasyonu -->
     <script>
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
@@ -932,12 +1047,12 @@
 
         const colors = ['#f472b6', '#d946ef', '#a855f7', '#c084fc', '#818cf8'];
 
-        const particles = Array.from({ length: 50 }, () => ({
+        const particles = Array.from({ length: 45 }, () => ({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
             r: Math.random() * 3 + 1,
-            vx: (Math.random() - 0.5) * 0.6,
-            vy: (Math.random() - 0.5) * 0.6,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
             color: colors[Math.floor(Math.random() * colors.length)]
         }));
 
@@ -954,7 +1069,7 @@
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
                 ctx.fillStyle = p.color;
-                ctx.shadowBlur = 15;
+                ctx.shadowBlur = 12;
                 ctx.shadowColor = p.color;
                 ctx.fill();
 
@@ -964,12 +1079,12 @@
                     const dy = p.y - p2.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    if (dist < 130) {
+                    if (dist < 120) {
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
-                        ctx.strokeStyle = `rgba(217, 70, 239, ${1 - dist / 130 * 0.6})`;
-                        ctx.lineWidth = 0.6;
+                        ctx.strokeStyle = `rgba(217, 70, 239, ${1 - dist / 120 * 0.5})`;
+                        ctx.lineWidth = 0.5;
                         ctx.stroke();
                     }
                 }
